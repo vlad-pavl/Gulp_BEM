@@ -2,7 +2,7 @@
 <p>Environment for developing web projects, based on Gulp</p>
 
 <p>
-	<img src="https://raw.githubusercontent.com/agragregra/oh5/master/app/images/src/preview.jpg" alt="Start HTML Template" style="max-width: 100%;">
+	<img src="https://github.com/vlad-pavl/StartupGULP/edit/master/readme.md" alt="Start Template" style="max-width: 100%;">
 </p>
 
 <h2>Environmental requirements</h2>
