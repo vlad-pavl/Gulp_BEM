@@ -34,7 +34,7 @@ let paths = {
 
 	images: {
 		src:  baseDir + '/images/src/**/*',
-		dest: baseDir + '/images/dest',
+		dest: baseDir + '/images/dist',
 	},
 
 	deploy: {
