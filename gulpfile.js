@@ -1,171 +1,177 @@
-// VARIABLES & PATHS
+'use strict'
+// VARIABLES, PATCH
 
-let preprocessor = 'scss', // Preprocessor (sass, scss, less, styl)
-    fileswatch   = 'html,htm,txt,json,md,woff2', // List of files extensions for watching & hard reload (comma separated)
-    imageswatch  = 'jpg,jpeg,png,webp,svg', // List of images extensions for watching & compression (comma separated)
-    baseDir      = 'app', // Base directory path without «/» at the end
-    online       = true; // If «false» - Browsersync will work offline without internet connection
+let preprocessor = 'scss',
+    baseDir      = 'app';
 
-let paths = {
+let patch = {
 
-	scripts: {
-		src: [
-			// 'node_modules/jquery/dist/jquery.min.js', // npm vendor example (npm i --save-dev jquery)
-			baseDir + '/js/modules/**/*.js',
-			baseDir + '/js/app.js' // app.js. Always at the end
-		],
-		dest: baseDir + '/js',
-	},
+   html: {
+      src: [
+         baseDir + '/*.html',
+         baseDir + '/pages/*.html'
+      ],
+      dest: './dist/',
+      watch: [
+         baseDir + '/blocks/**/*.html',
+         baseDir + '/*.html',
+         baseDir + '/pages/**/*.html'
+      ]
+   },
 
-	styles: {
-		src:  baseDir + '/' + preprocessor + '/main.*',
-		dest: baseDir + '/css',
-	},
+   styles: {
+      src: baseDir + '/styles/main.' + preprocessor,
+      dest: './dist/styles/',
+      watch: [
+         baseDir + '/blocks/**/*.' + preprocessor,
+         baseDir + '/styles/**/*.' + preprocessor
+      ]
+   },
 
-	fonts: {
-		src: baseDir + '/fonts/src/**/*.ttf',
-		dest: baseDir + '/fonts/dist',
-	},
+   scripts: {
+      src: baseDir + '/js/index.js',
+      dest: './dist/js',
+      watch: [
+         baseDir + '/blocks/**/*.js',
+         baseDir + '/js/**/*.js'
+      ]
+   },
 
-	otf2ttf: {
-		src: baseDir + '/fonts/src/**/*.otf',
-		dest: baseDir + '/fonts/src',
-	},
+   images: {
+      src: baseDir + '/img/**/*',
+      dest: './dist/img/',
+      watch: baseDir + '/img/**/*'
+   },
 
-	images: {
-		src:  baseDir + '/images/src/**/*',
-		dest: baseDir + '/images/dist',
-	},
+   sprites: {
+      src: baseDir + '/img/svg/*.svg',
+      dest: './dist/img/sprites/',
+      watch: baseDir + 'img/svg/*.svg'
+   },
 
-	deploy: {
-		hostname:    'username@yousite.com', // Deploy hostname
-		destination: 'yousite/public_html/', // Deploy destination
-		include:     [/* '*.htaccess' */], // Included files to deploy
-		exclude:     [ '**/Thumbs.db', '**/*.DS_Store' ], // Excluded files from deploy
-	},
-
-	cssOutputName: 'app.min.css',
-	jsOutputName:  'app.min.js',
-
+   fonts: {
+      src: baseDir + '/fonts/**/*',
+      dest: './dist/fonts/',
+      watch: baseDir + '/fonts/**/*'
+   }
 }
+
 
 // LOGIC
 
-const { src, dest, parallel, series, watch } = require('gulp'),
-		sass         = require('gulp-sass'),
-		scss         = require('gulp-sass'),
-		less         = require('gulp-less'),
-		styl         = require('gulp-stylus'),
-		cleancss     = require('gulp-clean-css'),
-		concat       = require('gulp-concat'),
-		browserSync  = require('browser-sync').create(),
-		uglify       = require('gulp-uglify-es').default,
-		autoprefixer = require('gulp-autoprefixer'),
-		shorthand	 = require('gulp-shorthand'),
-		ttf2woff2	 = require('gulp-ttf2woff2'),
-		fonter		 = require('gulp-fonter'),
-		imagemin     = require('gulp-imagemin'),
-		newer        = require('gulp-newer'),
-		rsync        = require('gulp-rsync'),
-		del          = require('del');
+const { src, dest, parallel, series, watch} = require('gulp'),
+   browserSync   = require('browser-sync').create(),
+   fileInclude   = require('gulp-file-include'),
+   scss          = require('gulp-sass'),
+   notify        = require('gulp-notify'),
+   autoprefixer  = require('gulp-autoprefixer'),
+   groupMedia    = require('gulp-group-css-media-queries'),
+   sourcemaps    = require('gulp-sourcemaps'),
+   rename        = require('gulp-rename'),
+   cleanCss      = require('gulp-clean-css'),
+   del           = require('del'),
+   gulpIf        = require("gulp-if"),
+   yargs         = require('yargs').argv,
+   replace       = require('gulp-replace'),
+   webpack       = require('webpack'),
+   webpackStream = require('webpack-stream'),
+   uglify        = require('gulp-uglify-es').default,
+   imagesMin     = require('gulp-imagemin'),
+   svgSprites    = require('gulp-svg-sprite'),
+   ttf2woff2     = require('gulp-ttf2woff2');
 
-function browsersync() {
-	browserSync.init({
-		server: { baseDir: baseDir + '/' },
-		notify: false,
-		online: online
-	})
+const production = !!yargs.production;
+const webpackConfig = require('./webpack.config');
+webpackConfig.mode = production ? "production" : "development";
+webpackConfig.devtool = production ? false : "source-map";
+
+function server() {
+   browserSync.init({
+      server: './dist/',
+      notify: false
+   });
+   watch(patch.html.watch, html);
+   watch(patch.styles.watch, styles);
+   watch(patch.scripts.watch, scripts);
+   watch(patch.images.watch, images);
+   watch(patch.sprites.watch, sprites);
+   watch(patch.fonts.watch, fonts);
 }
 
-function scripts() {
-	return src(paths.scripts.src)
-	.pipe(concat(paths.jsOutputName))
-	.pipe(uglify())
-	.pipe(dest(paths.scripts.dest))
-	.pipe(browserSync.stream())
+function html() {
+   return src(patch.html.src)
+   .pipe(fileInclude())
+   .pipe(gulpIf(production, replace('.css', '.min.css')))
+   .pipe(gulpIf(production, replace('.js', '.min.js')))
+   .pipe(dest(patch.html.dest))
+   .pipe(browserSync.stream())
 }
 
 function styles() {
-	return src(paths.styles.src)
-	.pipe(eval(preprocessor)())
-	.pipe(concat(paths.cssOutputName))
-	.pipe(autoprefixer({ overrideBrowserslist: ['last 10 versions'], grid: true }))
-	.pipe(shorthand())
-	.pipe(cleancss( {level: { 1: { specialComments: 0 } },/* format: 'beautify' */ }))
-	.pipe(dest(paths.styles.dest))
-	.pipe(browserSync.stream())
+   return src(patch.styles.src)
+   .pipe(eval(preprocessor)())
+   .pipe(gulpIf(!production, sourcemaps.init()))
+   .pipe(scss.sync().on('error', notify.onError))
+   .pipe(groupMedia())
+   .pipe(gulpIf(production, autoprefixer({ overrideBrowserslist: ['last 10 versions'], grid: true })))
+   .pipe(gulpIf(production, cleanCss( {level: { 2: { specialComments: 0 } },/* format: 'beautify' */ })))
+   .pipe(gulpIf(production, rename({
+      suffix: ".min"
+   })))
+   .pipe(gulpIf(production, sourcemaps.write("./maps/")))
+   .pipe(dest(patch.styles.dest))
+   .pipe(browserSync.stream())
 }
 
-function fonts() {
-	return src(paths.fonts.src)
-	.pipe(ttf2woff2())
-	.pipe(dest(paths.fonts.dest))
-}
-
-function otf2ttf() {
-	return src(paths.otf2ttf.src)
-	.pipe(fonter({
-		formats: ['ttf']
-	}))
-	.pipe(dest(paths.otf2ttf.dest))
+function scripts() {
+   return src(patch.scripts.src)
+   .pipe(webpackStream(webpackConfig), webpack)
+   .pipe(gulpIf(production, rename({
+      suffix: '.min'
+   })))
+   .pipe(dest(patch.scripts.dest))
+   .pipe(browserSync.stream())
 }
 
 function images() {
-	return src(paths.images.src)
-	.pipe(newer(paths.images.dest))
-	.pipe(imagemin())
-	.pipe(dest(paths.images.dest))
+   return src(patch.images.src)
+   .pipe(gulpIf(production, imagesMin()))
+   .pipe(dest(patch.images.dest))
 }
 
-function cleanimg() {
-	return del('' + paths.images.dest + '/**/*', { force: true })
+function sprites() {
+   return src(patch.sprites.src)
+   .pipe(svgSprites({
+      mode: {
+         stack: {
+            sprite: '../sprite.svg',
+            example: true
+         }
+      }
+   }))
+   .pipe(dest(patch.sprites.dest))
 }
 
-function cleandist() {
-	return del('dist/**/*', { force: true })
+function fonts() {
+   return src(patch.fonts.src)
+   .pipe(ttf2woff2())
+   .pipe(dest(patch.fonts.dest))
 }
 
-function deploy() {
-	return src(baseDir + '/')
-	.pipe(rsync({
-		root: baseDir + '/',
-		hostname: paths.deploy.hostname,
-		destination: paths.deploy.destination,
-		include: paths.deploy.include,
-		exclude: paths.deploy.exclude,
-		recursive: true,
-		archive: true,
-		silent: false,
-		compress: true
-	}))
+
+function cleanDist() {
+   return del('./dist/**/*', { force: true })
 }
 
-function startwatch() {
-	watch(baseDir  + '/' + preprocessor + '/**/*', {usePolling: true, delay: 500}, styles);
-	watch(baseDir  + '/images/src/**/*.{' + imageswatch + '}', {usePolling: true}, images);
-	watch(baseDir + '/fonts/src/**/*', {usePolling: true}, fonts);
-	watch(baseDir  + '/**/*.{' + fileswatch + '}', {usePolling: true}).on('change', browserSync.reload);
-	watch([baseDir + '/js/**/*.js', '!' + paths.scripts.dest + '/*.min.js'], {usePolling: true}, scripts);
-}
 
-function buildcopy() {
-	return src([
-		'app/css/**.min.css',
-		'app/js/**/*.min.js',
-		'app/images/dest/**/*',
-		'app/**/*.html',
-	], { base: 'app' })
-	.pipe(dest('dist'))
-}
+exports.server    = server;
+exports.html      = html;
+exports.styles    = styles;
+exports.scripts   = scripts;
+exports.images    = images;
+exports.sprites   = sprites;
+exports.fonts     = fonts;
+exports.cleanDist = cleanDist;
 
-exports.browsersync = browsersync;
-exports.assets      = series(cleanimg, styles, scripts, images);
-exports.styles      = styles;
-exports.scripts     = scripts;
-exports.fonts		  = fonts;
-exports.otf2ttf	  = otf2ttf;
-exports.images      = images;
-exports.cleanimg    = cleanimg;
-exports.deploy      = deploy;
-exports.build       = series(cleandist, styles, scripts, images, buildcopy);
-exports.default     = parallel(images, styles, scripts, fonts, browsersync, startwatch);
+exports.prod      = series(cleanDist, parallel(html, styles, scripts, images, sprites, fonts));
+exports.default   = series(cleanDist, parallel(html, styles, scripts, images, sprites, fonts), parallel(server));
