@@ -75,7 +75,6 @@ const { src, dest, parallel, series, watch} = require('gulp'),
    replace       = require('gulp-replace'),
    webpack       = require('webpack'),
    webpackStream = require('webpack-stream'),
-   uglify        = require('gulp-uglify-es').default,
    imagesMin     = require('gulp-imagemin'),
    svgSprites    = require('gulp-svg-sprite'),
    ttf2woff2     = require('gulp-ttf2woff2');
@@ -139,13 +138,17 @@ function images() {
    .pipe(dest(patch.images.dest))
 }
 
+function delFolderSvg() {
+   return del('./dist/img/svg', { force: true })
+}
+
 function sprites() {
    return src(patch.sprites.src)
    .pipe(svgSprites({
       mode: {
          stack: {
             sprite: '../sprite.svg',
-            example: true
+            // example: true
          }
       }
    }))
@@ -173,5 +176,5 @@ exports.sprites   = sprites;
 exports.fonts     = fonts;
 exports.cleanDist = cleanDist;
 
-exports.prod      = series(cleanDist, parallel(html, styles, scripts, images, sprites, fonts));
-exports.default   = series(cleanDist, parallel(html, styles, scripts, images, sprites, fonts), parallel(server));
+exports.prod      = series(cleanDist, parallel(html, styles, scripts, images, delFolderSvg, sprites, fonts), delFolderSvg);
+exports.default   = series(cleanDist, parallel(html, styles, scripts, images, sprites, fonts), delFolderSvg, parallel(server));

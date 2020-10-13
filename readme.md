@@ -1,54 +1,80 @@
-<h1>StartupGULP</h1>
-<p>Environment for developing web projects, based on Gulp</p>
+<h1>Gulp_BEM</h1>
+<p>Среда для разработки веб-проектов на базе Gulp</p>
 
 <p>
-	<img src="https://github.com/vlad-pavl/StartupGULP/blob/master/app/images/src/StartupGULP.png" alt="Start Template" style="max-width: 100%;">
+	<img src="https://github.com/vlad-pavl/Gulp_BEM/blob/master/app/img/Gulp_BEM.png" alt="Start Template" style="max-width: 100%;">
 </p>
 
-<h2>Environmental requirements</h2>
-<p>To create an environment, you must have the following tools installed:</p>
+<h2>Требования к установке</h2>
+<p>Для создания среды у вас должны быть установлены следующие инструменты:</p>
 <ul>
 	<li>node.js</li>
 	<li>npm</li>
 	<li>gulp</li>
 </ul>
 
-<h2>How to use</h2>
+<h2>Как использовать</h2>
 <ol>
-	<li>Clone or Download <strong>StartupGULP</strong> from GitHub</li>
-	<li>Install Node Modules: npm i</li>
-	<li>Run: gulp</li>
+	<li><a href="https://github.com/vlad-pavl/Gulp_BEM.git">Clone</a> или <a href="https://github.com/vlad-pavl/Gulp_BEM/archive/master.zip">Download</a> <strong>Gulp_BEM</strong> из GitHub</li>
+	<li>установить node_modules: npm install</li>
+	<li>установить расширение <a href="https://prettier.io/">prettier</a> в редактор кода</li>
+	<li>установить расширение <a href="https://stylelint.io/">stylelint</a> в редактор кода</li>
+	<li>запустить: gulp</li>
 </ol>
 
-
-<h2>Main Gulp tasks:</h2>
-
+<h2>Особенности</h2>
 <ul>
-	<li><p><strong><em>gulp</em></strong>- run default gulp task (images, fonts, styles, scripts, browsersync, startwatch)</p>
-		<p>images from folder src are optimized moved to the dist folder</p>
-		<p>ttf format fonts are automatically converted to woff2 format and placed in dist folder</p>
-		<p>styles are concatenated, compressed, optimized and collected in a file main.min.css</p>
-		<p>all scripts are also collected in the file</p>
-		<p>the browser automatically refreshes the page after making changes</p>
-	</li>
+	<li>используется БЭМ структура</li>
+	<li>используется препроцессор SCSS</li>
+	<li>используктся Webpack для сборки JS модулей</li>
+	<li>используется транспайлер Babel для преобразования кода в обратно совместимую версию JavaScript></li>
+	<li>используется stylelint по код гайду AirBnB, вместе с Prettier</li>
 </ul>
 
+<h2>Основные команды</h2>
 <ul>
-	<li><strong><em>cleanimg</em></strong>: Clean all compressed images</li>
-	<li><strong><em>otf2ttf</em></strong>: With this task, you can convert fonts in otf format to ttf format. Fonts should be placed in the src folder. After that, by running gulp, all fonts will be converted to woff2 format and placed in the dist folder</li>
-	<li><strong><em>styles, scripts, images, assets</em></strong>: build assets (css, js, images or all)</li>
-	<li><strong><em>rsync</em></strong>: project deployment via <strong>RSYNC</strong></li>
-	<li><strong><em>build</em></strong>: build a project in a folder <i>dest</i></li>
+	<li><code>npm run dev</code> или просто <code>gulp</code> для разработки проекта</li>
+	<li><code>npm run build</code> для оптимизации и сборки проекта</li>
+	<li><code>npm run stylelint</code> для проверки SCSS файлов линтером</li>
+	<li><code>npm run stylelint:fix</code> для исправления ошибок в SCSS файлах</li>
+	<li><code>npm run bem-m myblock</code> для добавления БЭМ блока, где myblock - имя вашего блока</li>
+	<li><code>npm run bem-с mycomponent</code> для добавления БЭМ компонента, где mycomponent - имя вашего компонента</li>
+	<li>ознакомиться с полным списком тасков можно с помощью команды <code>gulp --tasks</code></li>
 </ul>
 
-<h2>Focal points:</h2>
-
+<h2>Основные моменты</h2>
+<h3>Компонентный подход к веб-разработке</h3>
+<p>В его основе лежит принцип разделения интерфейса на независимые блоки</p>
 <ul>
-	<li>In gulpfile you can use a variable you can quickly select a preprocessor convenient for you</li>
-	<li>Included in the assembly: bootstrap-reboot, bootstrap-grid, bootstrap breakpoints.</li>
-	<li>To use JQuery it is necessary to uncomment the corresponding field in gulpfile, and install the module with the command <i>npm i --save-dev jquery</i></li>
-	<li>You can read more about organizing scss code in the corresponding directory in app / scss / README.md</li>
-	<li>Rename ht.access to .htaccess before place it in your web server. This file contain rules for htaccess resources caching.</li>
+	<li>каждый БЭМ-блок имеет свою папку внутри <code>app/blocks/modules</code></li>
+	<li>каждая папка одного БЭМ блока может содержать в себе один HTML-файл, один SCSS-файл и один JS-файл</li>
+	<li>все HTML-файлы модулей импортируются в необходимые файлы страниц</li>
+	<li>все SCSS-файлы модулей импортируются в один файл <code>app/blocks/modules/_modules.scss</code></li>
+	<li>все JS-файлы модулей импортируются в app/js/import/modules.js</li>
+	<li>аналогичным образом происходит работа с компонентами</li>
 </ul>
-
+<h3>Шрифты</h3>
+<p>Рекомендуется использовать шрифты формата woff-2</p>
+<ul>
+	<li>шрифты должны помещаться в папку <code>app/fonts/</code></li>
+	<li>при запуске gulp шрифты перемещаются в папку <code>dist/fonts</code>, откуда затем должны быть подключены к проекту</li>
+	<li>шрифты формата ttf2 автоматически конвертируются в woff2 и так-же перемещаются в папку <code>dist/fonts/</code></li>
+	<li>все шрифты подключаются в файл <code>app/styles/base/_fonts.scss</code></li>
+</ul>
+<h3>Сторонние библиотеки</h3>
+<ul>
+	<li>сторонние библиотеки устанавливаются в <code>node_modules</code> с помощью npm</li>
+	<li>для подключения JS-файлов библиотек, импортируйте их в самом начале файла БЭМ блока, который использует этот скрипт</li>
+</ul>
+<p>Bootstrap</p>
+<ul>
+	<li><a href="https://bootstrap-4.ru/docs/4.0/content/reboot/">bootstrap-reboot.scss</a> - коллекция специфических изменений элементов CSS в едином файле, обеспечиваещая Bootstrap элегантную, простую и последовательную основу для быстрого начала работы</li>
+	<li><a href="https://bootstrap-4.ru/docs/4.0/layout/overview/">_breakpoints.scss</a> - Bootstrap Breakpoints mixin</li>
+	<li><a href="https://bootstrap-4.ru/docs/4.0/layout/grid/">bootstrap-grid.scss</a> - сетка Bootstrap</li>
+	<li><a href="https://bootstrap-4.ru/docs/4.0/utilities/sizing/">_sizing.scss</a> - легкое создание элемента таким же широким или высоким (относительно его родителя) с помощью утилит ширины и высоты</li>
+</ul>
+<p>Для их подключения нужно перейти в директорию <code>app/styles/vendors/_bootstrap.scss</code> и раскомментировать неодходимое.</p>
+<ul>
+	<li>для других стилевых библиотек можно создать файл <code>app/styles/vendors/_libs.scss</code></li>
+</ul>
 
