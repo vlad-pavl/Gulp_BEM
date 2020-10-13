@@ -2,7 +2,7 @@
 <p>Среда для разработки веб-проектов на базе Gulp</p>
 
 <p>
-	<img src="https://github.com/vlad-pavl/Gulp_BEM/blob/master/app/img/Gulp_BEM.png" alt="Start Template" style="max-width: 100%;">
+	<img src="https://github.com/vlad-pavl/Gulp_BEM/blob/master/app/img/previews.png" alt="Start Template" style="max-width: 100%;">
 </p>
 
 <h2>Требования к установке</h2>
