@@ -1,4 +1,5 @@
 'use strict'
+
 // VARIABLES, PATCH
 
 let preprocessor = 'scss',
@@ -56,10 +57,9 @@ let patch = {
    }
 }
 
-
 // LOGIC
 
-const { src, dest, parallel, series, watch} = require('gulp'),
+const { src, dest, parallel, series, watch } = require('gulp'),
    browserSync   = require('browser-sync').create(),
    fileInclude   = require('gulp-file-include'),
    scss          = require('gulp-sass'),
@@ -76,6 +76,7 @@ const { src, dest, parallel, series, watch} = require('gulp'),
    webpack       = require('webpack'),
    webpackStream = require('webpack-stream'),
    imagesMin     = require('gulp-imagemin'),
+   htmlMin       = require('gulp-htmlmin'),
    svgSprites    = require('gulp-svg-sprite'),
    ttf2woff2     = require('gulp-ttf2woff2');
 
@@ -89,12 +90,12 @@ function server() {
       server: './dist/',
       notify: false
    });
-   watch(patch.html.watch, html);
-   watch(patch.styles.watch, styles);
-   watch(patch.scripts.watch, scripts);
-   watch(patch.images.watch, images);
-   watch(patch.sprites.watch, sprites);
-   watch(patch.fonts.watch, fonts);
+   watch(patch.html.watch, { usePolling: true }, html);
+   watch(patch.styles.watch, { usePolling: true }, styles);
+   watch(patch.scripts.watch, { usePolling: true }, scripts);
+   watch(patch.images.watch, { usePolling: true }, images);
+   watch(patch.sprites.watch, { usePolling: true }, sprites);
+   watch(patch.fonts.watch, { usePolling: true }, fonts);
 }
 
 function html() {
@@ -102,6 +103,7 @@ function html() {
    .pipe(fileInclude())
    .pipe(gulpIf(production, replace('.css', '.min.css')))
    .pipe(gulpIf(production, replace('.js', '.min.js')))
+   .pipe(gulpIf(production, htmlMin({ collapseWhitespace: true })))
    .pipe(dest(patch.html.dest))
    .pipe(browserSync.stream())
 }
@@ -166,7 +168,6 @@ function cleanDist() {
    return del('./dist/**/*', { force: true })
 }
 
-
 exports.server    = server;
 exports.html      = html;
 exports.styles    = styles;
@@ -175,6 +176,5 @@ exports.images    = images;
 exports.sprites   = sprites;
 exports.fonts     = fonts;
 exports.cleanDist = cleanDist;
-
 exports.prod      = series(cleanDist, parallel(html, styles, scripts, images, delFolderSvg, sprites, fonts), delFolderSvg);
 exports.default   = series(cleanDist, parallel(html, styles, scripts, images, sprites, fonts), delFolderSvg, parallel(server));

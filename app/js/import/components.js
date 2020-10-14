@@ -1,1 +1,1 @@
-// import "%components%/burger/burger";
+// import '%components%/burger/burger';

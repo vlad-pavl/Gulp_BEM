@@ -56,6 +56,7 @@ module.exports = {
     resolve: {
         alias: {
             "%modules%": path.resolve(__dirname, "app/blocks/modules"),
+            "%components%": path.resolve(__dirname, "app/blocks/components")
         }
     }
 };

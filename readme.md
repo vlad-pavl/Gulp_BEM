@@ -17,8 +17,8 @@
 <ol>
 	<li><a href="https://github.com/vlad-pavl/Gulp_BEM.git">Clone</a> или <a href="https://github.com/vlad-pavl/Gulp_BEM/archive/master.zip">Download</a> <strong>Gulp_BEM</strong> из GitHub</li>
 	<li>установить node_modules: npm install</li>
-	<li>установить расширение <a href="https://prettier.io/">prettier</a> в редактор кода</li>
-	<li>установить расширение <a href="https://stylelint.io/">stylelint</a> в редактор кода</li>
+	<li>установить расширение <a href="https://prettier.io/" target="_blank">prettier</a> в редактор кода</li>
+	<li>установить расширение <a href="https://stylelint.io/" target="_blank">stylelint</a> в редактор кода</li>
 	<li>запустить: gulp</li>
 </ol>
 
@@ -28,7 +28,7 @@
 	<li>используется препроцессор SCSS</li>
 	<li>используктся Webpack для сборки JS модулей</li>
 	<li>используется транспайлер Babel для преобразования кода в обратно совместимую версию JavaScript</li>
-	<li>используется stylelint по код гайду AirBnB, вместе с Prettier</li>
+	<li>используется stylelint по код гайду <a href="https://github.com/rtplv/airbnb-css-ru" target="_blank">AirBnB</a>, <a href= "https://github.com/constverum/stylelint-config-rational-order" target="_blank">правила</a> порядка свойств, Prettier для форматирования кода</li>
 </ul>
 
 <h2>Основные команды</h2>
@@ -68,12 +68,12 @@
 </ul>
 <p>Bootstrap</p>
 <ul>
-	<li><a href="https://bootstrap-4.ru/docs/4.0/content/reboot/">bootstrap-reboot.scss</a> - коллекция специфических изменений элементов CSS в едином файле, обеспечиваещая Bootstrap элегантную, простую и последовательную основу для быстрого начала работы</li>
-	<li><a href="https://bootstrap-4.ru/docs/4.0/layout/overview/">_breakpoints.scss</a> - Bootstrap Breakpoints mixin</li>
-	<li><a href="https://bootstrap-4.ru/docs/4.0/layout/grid/">bootstrap-grid.scss</a> - сетка Bootstrap</li>
-	<li><a href="https://bootstrap-4.ru/docs/4.0/utilities/sizing/">_sizing.scss</a> - легкое создание элемента таким же широким или высоким (относительно его родителя) с помощью утилит ширины и высоты</li>
+	<li><a href="https://bootstrap-4.ru/docs/4.0/content/reboot/" target="_blank">bootstrap-reboot.scss</a> - коллекция специфических изменений элементов CSS в едином файле, обеспечиваещая Bootstrap элегантную, простую и последовательную основу для быстрого начала работы</li>
+	<li><a href="https://bootstrap-4.ru/docs/4.0/layout/overview/" target="_blank">_breakpoints.scss</a> - Bootstrap Breakpoints mixin</li>
+	<li><a href="https://bootstrap-4.ru/docs/4.0/layout/grid/" target="_blank">bootstrap-grid.scss</a> - сетка Bootstrap</li>
+	<li><a href="https://bootstrap-4.ru/docs/4.0/utilities/sizing/" target="_blank">_sizing.scss</a> - легкое создание элемента таким же широким или высоким (относительно его родителя) с помощью утилит ширины и высоты</li>
 </ul>
-<p>Для их подключения нужно перейти в директорию <code>app/styles/vendors/_bootstrap.scss</code> и раскомментировать неодходимое.</p>
+<p>Для их подключения нужно перейти в директорию <code>app/styles/vendors/_bootstrap.scss</code> и раскомментировать необходимое.</p>
 <ul>
 	<li>для других стилевых библиотек можно создать файл <code>app/styles/vendors/_libs.scss</code></li>
 </ul>
