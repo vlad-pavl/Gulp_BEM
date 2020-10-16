@@ -91,7 +91,7 @@ function server() {
       notify: false
    });
    watch(patch.html.watch, { usePolling: true }, html);
-   watch(patch.styles.watch, { usePolling: true }, styles);
+   watch(patch.styles.watch, { usePolling: true }, { delay: 800 }, styles);
    watch(patch.scripts.watch, { usePolling: true }, scripts);
    watch(patch.images.watch, { usePolling: true }, images);
    watch(patch.sprites.watch, { usePolling: true }, sprites);
@@ -111,6 +111,10 @@ function html() {
 function styles() {
    return src(patch.styles.src)
    .pipe(eval(preprocessor)())
+   .on( 'error', notify.onError({
+      title: 'Sass Compilation Failed',
+      message: '<%= error.message %>'
+   }) )
    .pipe(gulpIf(!production, sourcemaps.init()))
    .pipe(scss.sync().on('error', notify.onError))
    .pipe(groupMedia())
