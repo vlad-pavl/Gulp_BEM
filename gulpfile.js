@@ -91,7 +91,7 @@ function server() {
       notify: false
    });
    watch(patch.html.watch, { usePolling: true }, html);
-   watch(patch.styles.watch, { usePolling: true }, { delay: 800 }, styles);
+   watch(patch.styles.watch, { usePolling: true }, styles);
    watch(patch.scripts.watch, { usePolling: true }, scripts);
    watch(patch.images.watch, { usePolling: true }, images);
    watch(patch.sprites.watch, { usePolling: true }, sprites);
