@@ -17,25 +17,6 @@ module.exports = {
         main: "./app/js/index.js",
     },
 
-    output: {
-        filename: "[name].js",
-        chunkFilename: "[name].js",
-        publicPath: "/"
-    },
-
-    optimization: {
-        splitChunks: {
-            cacheGroups: {
-                vendor: {
-                    test: /node_modules/,
-                    chunks: "initial",
-                    name: "vendor",
-                    enforce: true
-                }
-            }
-        }
-    },
-
     module: {
         rules: [
             {
