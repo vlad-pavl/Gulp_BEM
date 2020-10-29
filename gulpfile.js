@@ -83,7 +83,7 @@ const { src, dest, parallel, series, watch } = require('gulp'),
 const production = !!yargs.production;
 const webpackConfig = require('./webpack.config');
 webpackConfig.mode = production ? "production" : "development";
-webpackConfig.devtool = production ? false : "source-map";
+webpackConfig.devtool = production ?  "source-map": false;
 
 function server() {
    browserSync.init({
@@ -102,7 +102,6 @@ function html() {
    return src(patch.html.src)
    .pipe(fileInclude())
    .pipe(gulpIf(production, replace('.css', '.min.css')))
-   .pipe(gulpIf(production, replace('.js', '.min.js')))
    .pipe(gulpIf(production, htmlMin({ collapseWhitespace: true })))
    .pipe(dest(patch.html.dest))
    .pipe(browserSync.stream())
@@ -115,7 +114,7 @@ function styles() {
       title: 'Sass Compilation Failed',
       message: '<%= error.message %>'
    }) )
-   .pipe(gulpIf(!production, sourcemaps.init()))
+   .pipe(gulpIf(production, sourcemaps.init()))
    .pipe(scss.sync().on('error', notify.onError))
    .pipe(groupMedia())
    .pipe(gulpIf(production, autoprefixer({ overrideBrowserslist: ['last 10 versions'], grid: true })))
@@ -123,7 +122,7 @@ function styles() {
    .pipe(gulpIf(production, rename({
       suffix: ".min"
    })))
-   .pipe(gulpIf(production, sourcemaps.write("./maps/")))
+   .pipe(gulpIf(production, sourcemaps.write('.')))
    .pipe(dest(patch.styles.dest))
    .pipe(browserSync.stream())
 }
@@ -131,9 +130,6 @@ function styles() {
 function scripts() {
    return src(patch.scripts.src)
    .pipe(webpackStream(webpackConfig), webpack)
-   .pipe(gulpIf(production, rename({
-      suffix: '.min'
-   })))
    .pipe(dest(patch.scripts.dest))
    .pipe(browserSync.stream())
 }
