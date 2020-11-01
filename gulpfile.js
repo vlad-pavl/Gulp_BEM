@@ -78,12 +78,9 @@ const { src, dest, parallel, series, watch } = require('gulp'),
    imagesMin     = require('gulp-imagemin'),
    htmlMin       = require('gulp-htmlmin'),
    svgSprites    = require('gulp-svg-sprite'),
-   ttf2woff2     = require('gulp-ttf2woff2');
-
-const production = !!yargs.production;
-const webpackConfig = require('./webpack.config');
-webpackConfig.mode = production ? "production" : "development";
-webpackConfig.devtool = production ?  "source-map": false;
+   ttf2woff2     = require('gulp-ttf2woff2'),
+   webpackConfig = require('./webpack.config'),
+   production    = !!yargs.production;
 
 function server() {
    browserSync.init({
