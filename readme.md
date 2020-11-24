@@ -33,7 +33,7 @@
 
 <h2>Основные команды</h2>
 <ul>
-	<li><code>npm run dev</code> или просто <code>gulp</code> для разработки проекта</li>
+	<li><code>npm run dev</code> для разработки проекта</li>
 	<li><code>npm run build</code> для оптимизации и сборки проекта</li>
 	<li><code>npm run stylelint</code> для проверки SCSS файлов линтером</li>
 	<li><code>npm run stylelint:fix</code> для исправления ошибок в SCSS файлах</li>
